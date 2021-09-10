@@ -1,0 +1,262 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block scripts %}
+<script>
+    function insertParam(key, value) {
+        key = encodeURIComponent(key);
+        value = encodeURIComponent(value);
+
+        // kvp looks like ['key1=value1', 'key2=value2', ...]
+        var kvp = document.location.search.substr(1).split('&');
+        let i=0;
+
+        for(; i<kvp.length; i++){
+            if (kvp[i].startsWith(key + '=')) {
+                let pair = kvp[i].split('=');
+                pair[1] = value;
+                kvp[i] = pair.join('=');
+                break;
+            }
+        }
+
+        if(i >= kvp.length){
+            kvp[kvp.length] = [key,value].join('=');
+        }
+
+        // can return this or...
+        let params = kvp.join('&');
+
+        // reload page with new params
+        document.location.search = params;
+    }
+
+    function clearURL() {
+        return document.location = "adminProdView";
+    }
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<h1 class="display-4">View Products</h1>
+ <!--Search bar-->
+ <div>
+    <form method="POST" action="/products/adminSearch" class="form-inline mt-2 mt-md-0" style="text-align: right;"> 
+        <div class="form-group">
+            <input type="text" placeholder="Search.." name="search">
+            <button class="btn" type="submit"><i  class="fa fa-search" style="font-size: 25px"></i></button>
+         </div>
+    </form>
+</div>
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+	<li class="nav-item">
+		<a class="nav-link" data-toggle="tab" href="#" onclick="clearURL()">View All</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category', 'snacks')">Snacks</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category','drinks')">Drinks</a>
+	</li>
+    <li class="nav-item">
+		<a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category','fruits')">Fruits</a>
+	</li>
+    <li class="nav-item">
+		<a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category','instantFood')">Instant Food</a>
+	</li>
+</ul>
+
+<!-- Tab panes -->
+<div class="row">
+    <div class="col">
+        <!--Snacks Category-->
+        <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Description</th>
+                <th>Product Ingredients</th>
+                <th>Price (S$)</th>
+                <th>Category</th>
+                <th>Location Sold/instocks</th>
+                <th>Image</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for x in prod_list %}
+            {% set uuid = x["uuid"] %}
+            {% set counter = loop.index %}
+            <tr>
+                <td>{{ x["name"] }}</td>
+                <td>{{ x["description"] }}</td>
+                <td>{{ x["ingredients"] }}</td>
+                <td>{{ x["price"] }} </td>
+                <td>{{ x["category"] }}</td>
+                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#instocks{{ uuid }}">Open for Instocks</button></td>
+                <!-- MODAL FOR INSTOCKS -->
+                <div class="modal fade bd-example-modal-xl" id="instocks{{ uuid }}">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+
+                        <div class="modal-header text-left">
+                            <h5 class="modal-title">{{ x["name"] }}</h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="container">
+
+                                <div class="row">
+
+                                    <div class="col-3">
+                                        <nav class="nav flex-column bg-light navbar-light nav-pills p-3">
+                                            {% for i in locationList %}
+                                            {% set location_uuid = 'a' + counter + i["uuid"] %}
+                                                {% if loop.index == 1 %}
+                                                <a class="nav-link active" data-toggle="tab" href="#{{ location_uuid }}"> {{ i["name"] }}</a>
+                                                {% else %}
+                                                <a class="nav-link" data-toggle="tab" href="#{{ location_uuid }}"> {{ i["name"] }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </nav>
+                                    </div>
+
+                                    <div class="col-9">
+
+                                        <div class="tab-content">
+
+                                            {% set instockList = [] %}
+                                            {% for y in pdList %}
+                                                {% if y["product_uuid"] == uuid %}
+                                                {{ instockList.push(y) }}
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            {% for i in locationList %}
+                                            {% set location_uuid = 'a' + counter + i["uuid"] %}  <!--have location_uuid + uuid -->
+                                                {% if loop.index == 1 %}
+                                                <div class="container tab-pane active" id="{{ location_uuid }}">
+
+                                                <div class="row">
+
+                                                    <div class="col-8" style="text-align: left">
+                                                        <iframe width="480" height="500" style="text-align: left" src="{{ i["iframe_link"] }}"></iframe>
+                                                    </div>
+
+                                                    <div class="col-4">
+                                                        <h5>{{ i["name"] }}</h5>
+                                                        <br>
+                                                        <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{ i["address"] }}</p> 
+                                                        <p><i class="fa fa-clock-o" aria-hidden="true"></i> Opening Hours: {{ i["openingHours"] }} </p>
+                                                        <p><i class="fa fa-phone" aria-hidden="true"></i> +65 {{ i["phoneNo"] }} </p> 
+                                                        <p>Instock: {{ instockList[loop.index-1]["quantity"] }}</p>
+                                                    </div>
+
+                                                </div>
+                                                
+                                                </div>
+                                                {% else %}
+                                                <div class="container tab-pane" id="{{ location_uuid }}">
+
+                                                <div class="row">
+
+                                                    <div class="col-8" style="text-align: left">
+                                                        <iframe width="480" height="500" style="text-align: left" src="{{ i["iframe_link"] }}"></iframe>
+                                                    </div>
+
+                                                    <div class="col-4">
+                                                        <h5>{{ i["name"] }}</h5>
+                                                        <br>
+                                                        <p>{{ instockList[loop.index - 1]["product_uuid"] }}</p>
+                                                        <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{ i["address"] }}</p> 
+                                                        <p><i class="fa fa-clock-o" aria-hidden="true"></i> Opening Hours: {{ i["openingHours"] }} </p>
+                                                        <p><i class="fa fa-phone" aria-hidden="true"></i> +65 {{ i["phoneNo"] }} </p>
+                                                        <p>Instock: {{ instockList[loop.index-1]["quantity"] }}</p>
+                                                    </div>
+
+                                                </div>
+
+                                                </div>
+                                                {% endif %}
+                                            
+                                            {% endfor %}
+                                            
+                                        </div>
+                                        
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer text-left">
+                            <a href="/products/orderInstock/{{ uuid }}" id="{{session['userID']}}" class="btn btn-warning">ORDER MORE STOCKS</a>
+                        </div>
+
+                    </div>
+
+                </div>
+                </div>
+                
+                <td><img src="/{{ x["img_location"] }}" alt="" style="width:150px;"></td>
+                <td>
+                <div class="row">
+                    <a href="/products/updateProduct/{{ uuid }}" class="btn btn-warning">Update</a>
+                </div>
+                <div class="row">
+                    <a href="/products/uploadPhoto/{{ uuid }}" class="btn btn-warning">Upload Product Image</a>
+                </div>
+                </td>
+
+                <td>
+                <form action="/products/deleteProduct/{{ uuid }}" method="POST">
+                    <!-- Button to Open the Modal -->
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal_{{ uuid }}"">
+                    Delete
+                    </button>
+                    
+                    <!-- The Modal -->
+                    <div class="modal fade" id="myModal_{{ uuid }}">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                        
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Delete Confirmation</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            Are you sure you want to delete {{i["name"]}}?
+                        </div>
+                        
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <input type="submit" value="Delete" class="btn btn-danger">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>                      
+                        </div>
+                        </div>
+                    </div>
+
+                </form>
+                </td>
+            </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+            <a href="/products/create" class="btn btn-warning"> CREATE PRODUCT </a>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

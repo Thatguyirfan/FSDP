@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% block title %}Error | DON DON DONKI{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-6" style="display:block; margin:auto; text-align: right; padding: 10px;">
+        <img src="{{url_for('static', filename='donpenProf03.png')}}" alt="" height=500px>
+    </div>
+    <div class="col-6" style="display:block; margin:auto; text-align: center;">
+        <h3>PAGE NOT FOUND</h3>
+        <h5>The page you are trying to access might be moved or removed.</h5>
+        <br>
+        <a href="/" class="btn btn-warning">GO BACK TO HOME</a>
+    </div>
+</div>
+{% endblock %}

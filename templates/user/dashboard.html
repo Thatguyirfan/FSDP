@@ -1,0 +1,201 @@
+{% extends "layouts/base.html" %}
+{% block title %}Dashboard | DON DON DONKI{% endblock %}
+
+{% block content %}
+<br>
+<div class="container-sm" style="background-color: #EFEFEF; padding: 10px; line-height: 5px; border-radius: 5px; margin-bottom: 30px">
+    <div class="d-flex">
+        <div class="p-2 flex-fill bd-highlight" style="margin-left: 50px; margin-top: 15px">
+            <p>{{ user.name }}</p>
+            <p style="color: #A9A9A9">{{ user.title }}</p>
+        </div>
+        <div class="p-2 flex-fill bd-highlight" style="margin-right: 50px; margin-top: 8px;">
+            <a href="/auth/logout"><input type="submit" value="Log Out" class="btn btn-danger d-inline-flex p-2 float-right" /></a>
+            <a href="/user/editprofile"><input type="submit" value="Edit Profile" class="btn btn-primary d-inline-flex p-2 float-right" style="margin-right: 5px" /></a>
+        </div>
+    </div>
+</div>
+<div class="container-sm" style="padding: 10px; line-height: 5px">
+    {% if user.title == "Manager" %}
+    <div class="d-flex flex-row justify-content-center">
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-plus-circle align-middle" style="font-size: 20px"></i> Create Product</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/products/create" style="text-decoration: none">>></a></p>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-tags align-middle" style="font-size: 20px"></i> Manage Products</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/products/adminProdView" style="text-decoration: none">>></a></p>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-users-cog align-middle" style="font-size: 20px"></i> Manage Users</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/manage/manageaccounts" style="text-decoration: none">>></a></p>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-user-shield align-middle" style="font-size: 20px"></i> Manage Employees</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/manage/manageemployees" style="text-decoration: none">>></a></p>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-store align-middle" style="font-size: 20px"></i> Store Entries</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/records/entries" style="text-decoration: none">>></a></p>
+        </div>
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-end">
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-file-alt align-middle" style="font-size: 20px"></i> View Orders</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/orders/updateOrders" style="text-decoration: none">>></a></p>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px; margin-right: 17.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-comment-alt align-middle" style="font-size: 20px"></i> View Feedback</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/feedback/view" style="text-decoration: none">>></a></p>
+        </div>
+    </div>
+    {% elif user.title == "Employee" %}
+    <div class="d-flex flex-row justify-content-start">
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-user-clock align-middle" style="font-size: 20px"></i> Hours Clocked</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px">{{ user.hoursClocked | round(2) }}</p>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-coins align-middle" style="font-size: 20px"></i> My Salary</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px">${{ user.salary }}</p>
+        </div>
+        <div class="p-2 bd-highlight flex-grow-1" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-map-marker-alt align-middle" style="font-size: 20px"></i> Working Location</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: left; padding-left: 8px; padding-bottom: 5px">{{ user.workingLocation }}</p>
+        </div>
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-start">
+        <div class="p-2 bd-highlight flex-grow-1" style="background-color: #EFEFEF; border-radius: 5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-calendar-alt align-middle" style="font-size: 20px"></i> My Schedule</p>
+            </div>
+            <br>
+            {% if user.schedule == "{}" %}
+            <p style="font-size: 20px; text-align: left; padding-left: 10px; padding-bottom: 5px">There's nothing to display here.</p>
+            {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Time</th>
+                        {% for day, item in schedule %}
+                        <th scope="col">{{ day }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                {% set times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"] %}
+                <tbody>
+                    {% for time in times %}
+                    {% set outer_loop = loop %}
+                    <tr>
+                        <th scope="row">{{ time }}</th>
+                        {% for day, item in schedule %}
+                        <td>{{ item[outer_loop.index0] }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-end">
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-store align-middle" style="font-size: 20px"></i> Store Entry</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/records/entries" style="text-decoration: none">>></a></p>
+        </div>
+    </div>
+    {% else %}
+    <div class="d-flex flex-row justify-content-around">
+        <!--TODO: same here-->
+        <div class="p-2 bd-highlight {% if true %}align-self-start{% endif %}" style="background-color: #EFEFEF; border-radius: 5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-coins align-middle" style="font-size: 20px"></i> My Coins</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px">{{ user.coins }}</p>
+        </div>
+        <div class="p-2 bd-highlight flex-grow-1" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-history align-middle" style="font-size: 20px"></i> Purchase History</p>
+            </div>
+            <br>
+            <p style="font-size: 20px; text-align: left; padding-left: 10px; padding-bottom: 5px">{{ orderSummary }} <a href="/orders" style="text-decoration: none">>></a></p>
+        </div>
+    </div>
+    <br>
+    <div class="d-flex flex-row justify-content-end">
+        <div class="p-2 bd-highlight flex-grow-1" style="background-color: #EFEFEF; border-radius: 5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold; margin-bottom: 0px"><i class="fas fa-address-card align-middle" style="font-size: 20px"></i> My Membership</p>
+            </div>
+            <br>
+            <br>
+            {% if user.title == "Bronze Member" %}
+            {% set target = 2000 %}
+            {% elif user.title == "Silver Member" %}
+            {% set target = 5000 %}
+            {% else %}
+            {% set target = 15000 %}
+            {% endif %}
+            {% set pct = user.spent / target * 100 %}
+            {% if pct > 100 %}
+            {% set pct = 100 %}
+            {% endif %}
+            {% set away = target - user.spent %}
+            {% if user.title == "Platinum Member" %}
+            {% set text = "You are at the highest membership tier." %}
+            {% else %}
+            {% set text = "You are $" + away + " away from reaching the next tier!" %}
+            {% endif %}
+            <p style="font-size: 20px; text-align: left; padding-left: 10px;">{{ text }}</p>
+            <div class="progress" style="margin-left: 10px; margin-right: 10px; background-color: #FFFFFF">
+                <div class="progress-bar" role="progressbar" style="width: {{ pct }}%" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        <div class="p-2 bd-highlight" style="background-color: #EFEFEF; border-radius: 5px; margin-left: 2.5px; margin-right: 2.5px">
+            <div style="padding: 10px">
+                <p style="font-size: 20px; font-weight: bold"><i class="fas fa-comment-dots align-middle" style="font-size: 20px"></i> My Feedback</p>
+            </div>
+            <br>
+            <p style="font-size: 40px; text-align: right; padding-right: 5px; padding-bottom: 5px"><a href="/feedback" style="text-decoration: none">>></a></p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

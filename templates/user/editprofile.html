@@ -1,0 +1,114 @@
+{% extends "layouts/base.html" %}
+{% block title %}{% if reg %}Edit Profile{% else %}Update Account{% endif %} | DON DON DONKI{% endblock %}
+
+{% block content %}
+<br>
+{% if accSuccess %}
+<div class="alert alert-success alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accSuccess }}
+</div>
+{% elif accError %}
+<div class="alert alert-danger alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accError }}
+</div>
+{% endif %}
+
+<div class="container-sm" style="background-color: #EFEFEF; padding: 30px; line-height: 5px; border-radius: 5px">
+    <h1 class="display-4">{% if reg %}Edit Profile{% else %}Update Account{% endif %}</h1>
+    <br>
+    <br>
+    <form method="POST" action="">
+        <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input id="fullname" name="fullname" type="text" placeholder="Full Name" value="{{user.name}}" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input id="address" name="address" type="text" placeholder="Address" value="{{user.address}}" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="Phone" value="{{user.phone}}" class="form-control" pattern="[3,6,8-9]{1}[0-9]{7}" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="email@email.com" value="{{user.email}}" class="form-control" disabled>
+        </div>
+        <br>
+        {% if (not reg) and emp %}
+        <div class="form-group">
+            <label for="salary">Salary</label>
+            <input id="salary" name="salary" type="number" placeholder="3000" value="{{user.salary}}" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="workinglocation">Working Location</label>
+            <select id="workinglocation" name="workinglocation" required>
+                <option value="Clarke Quay Central">Clarke Quay</option>
+                <option value="Orchard Central">Orchard</option>
+                <option value="City Square Mall">City Square</option>
+                <option value="Square 2">Square 2</option>
+                <option value="100AM">100AM</option>
+                <option value="JCube">JCube</option>
+                <option value="Jem">Jem</option>
+                <option value="HarbourFront Centre">HarbourFront Centre</option>
+            </select>
+        </div>
+        <br>
+        {% endif %}
+        <input type="submit" value="Submit" class="btn btn-primary"/>
+        {% if reg %}
+        <form action="/user/deleteself" method="POST">
+            <!--<input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {#user.get_first_name()#} {#user.get_last_name()#}?');">-->
+            <!-- Button to Open the Modal -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal_{{user.uuid}}">
+                Delete Account
+            </button>
+
+            <!-- The Modal -->
+            <div class="modal" id="myModal_{{session['userID']}}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirmation</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            Are you sure you want to delete your account?
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <a href="/user/deleteself"><button type="button" class="btn btn-danger">Delete</button></a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <a href="/user/changepassword"><p>Change password</p></a>
+        {% endif %}
+        {% if not reg %}
+        <hr>
+        {% endif %}
+        {% if reg %}
+        <a href="/user/dashboard"><p>Go back</p></a>
+        {% elif (not reg) and (not emp) %}
+        <a href="/manage/manageaccounts"><p>Go back</p></a>
+        {% elif (not reg) and emp %}
+        <a href="/manage/manageemployees"><p>Go back</p></a>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

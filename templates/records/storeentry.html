@@ -1,0 +1,99 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+{% block scripts %}
+<script>
+function setFields() {
+    var curdate = new Date();
+
+    var date = curdate.getFullYear() + "-" +
+    ("0" + (curdate.getMonth()+1)).slice(-2) + "-" +
+    ("0" + curdate.getDate()).slice(-2);
+
+    var time = ("0" + curdate.getHours()).slice(-2) + ":" + 
+    ("0" + curdate.getMinutes()).slice(-2);
+
+    document.getElementById("date").value = date;
+    document.getElementById("time").value = time;
+
+    document.getElementById("date").disabled = true;
+    document.getElementById("time").disabled = true;
+}
+
+function enableFields() {
+  document.getElementById("date").disabled = false;
+  document.getElementById("time").disabled = false;
+}
+
+</script>
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+
+{% if not (validTime) %}
+    <div class="alert alert-danger w-100 text-center mx-auto mt-3" role="alert">
+        Invalid Entry Time
+    </div>
+{% endif %}
+
+
+<div class="row">
+    <div class="pt-4 pl-5" align="left">
+        <h4 class="p-3 bg-dark text-warning">STORE ENTRY</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 d-flex justify-content-center">
+        <form method="POST" action="/records/storeexit" onsubmit="enableFields()">
+            <div class="form-group p-3">
+                <label for="store">Store:</label>
+                <select class="form-control" id="store" name="store">
+                    <option value="Orchard Central">Orchard Central</option>
+                    <option value="100AM">100AM</option>
+                    <option value="City Square Mall">City Square Mall</option>
+                    <option value="Square 2">Square 2</option>
+                    <option value="Clarke Quay Central">Clarke Quay Central</option>
+                    <option value="JCube">JCube</option>
+                    <option value="Jem">Jem</option>
+                    <option value="HarbourFront Centre">HarbourFront Centre</option>
+                </select>
+            </div>
+            <div class="form-group p-3">
+                <label for="date">Date:</label>
+                <input type="date" class="form-control" name="date" id="date" placeholder="">
+            </div>
+            <div class="form-group p-3">
+                <label for="time">Time:</label>
+                <input type="time" class="form-control" name="time" id="time" placeholder="">
+            </div>
+            <div class="form-group p-3">
+                <label for="nric">NRIC:</label>
+                <input type="text" class="form-control" name="nric" placeholder="" pattern="([T|t|S|s]{1})([0-9]{7})([A-Za-z]{1})" title="E.g: T1234567A" required>
+                <h6>e.g: T1234567A</h6>
+            </div>
+            <div class="form-group p-3">
+                <label for="temperature">Temperature (°C):</label>
+                <input type="number" step="0.1" min="30.0" max="50.0" class="form-control" name="temperature" placeholder="" required>
+                <h6>e.g: 36.4</h6>
+            </div>
+            <div class="form-group p-3">
+                <label for="mobile">Mobile No.:</label>
+                <input type="text" class="form-control" name="mobile" placeholder="" pattern="[0-9]{8}" required>
+                <h6>e.g: 12345678</h6>
+            </div>
+            <div class="row">
+                <div class="col-12 p-3" align="center">
+                    <input type="submit" value="Submit" class="p-3 btn btn-dark text-warning font-weight-bold">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>document.body.onload = setFields();</script>
+
+{% endblock %}

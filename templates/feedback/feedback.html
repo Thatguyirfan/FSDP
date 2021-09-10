@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="pt-4 pl-5" align="left">
+        <h4 class="p-3 bg-dark text-warning">FEEDBACK</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 d-flex justify-content-center">
+      <form method="POST" action="/feedback/acknowledgement">
+          <div class="form-group p-3">
+              <label for="name">Name:</label>
+              <input type="text" class="form-control" name="name" id="name" maxlength="50" required>
+          </div>
+          <div class="form-group p-3">
+              <label for="mobile">Mobile No.:</label>
+              <input type="text" class="form-control" name="mobile" id="mobile" pattern="[0-9]{8}" required>
+              <h6>e.g: 12345678</h6>
+          </div>
+          <div class="form-group p-3">
+              <label for="email">Email:</label>
+              <input type="email" class="form-control" name="email" id="email" required>
+              <h6>e.g: user@test.com</h6>
+          </div>
+          <div class="form-group p-3">
+              <label for="store">Store:</label>
+              <select class="form-control" name="store" id="store">
+                <option value="Orchard Central">Orchard Central</option>
+                  <option value="100AM">100AM</option>
+                  <option value="City Square Mall">City Square Mall</option>
+                  <option value="Square 2">Square 2</option>
+                  <option value="Clarke Quay Central">Clarke Quay Central</option>
+                  <option value="JCube">JCube</option>
+                  <option value="Jem">Jem</option>
+                  <option value="HarbourFront Centre">HarbourFront Centre</option>
+              </select>
+          </div>
+          <div class="form-group p-3">
+              <label for="reason">Reason of form:</label>
+              <select class="form-control" name="reason" id="reason">
+                <option value="Compliment">Compliment</option>
+                  <option value="Suggestion">Suggestion</option>
+                  <option value="Complaint">Complaint</option>
+                  <option value="Others">Others</option>
+              </select>
+          </div>
+          <div class="form-group p-3">
+              <label for="message">Message:</label>
+              <textarea class="form-control" name="message" id="message" rows="6" cols="50" required></textarea>
+          </div>
+
+          <div class="row">
+              <div class="col-12 p-3" align="center">
+                  <input type="submit" value="Submit" class="p-3 btn btn-dark text-warning font-weight-bold">
+              </div>
+          </div>
+      </form>
+    </div>
+</div>
+
+{% endblock %}

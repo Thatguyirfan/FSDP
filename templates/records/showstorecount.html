@@ -1,0 +1,104 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+
+<style>
+  .graphRow {
+    min-width: 750px;
+  }
+
+  .graphBox {
+    width: 800px; 
+    border: medium dashed; 
+    border-radius: 5px;
+  }
+</style>
+
+
+<div class="row">
+    <div class="pt-4 pl-5" align="left">
+        <h4 class="p-3 bg-dark text-warning">STORE COUNT - {{ store }}</h4>
+    </div>
+</div>
+
+<div class="row graphRow">
+  <div class="col-3">
+    <form method="POST" action="/records/showstorecount">
+      <div class="form-group p-5">
+          <label for="store">Store:</label>
+          <select class="form-control" name="store" id="store">
+            <option value="Orchard Central">Orchard Central</option>
+            <option value="100AM">100AM</option>
+            <option value="City Square Mall">City Square Mall</option>
+            <option value="Square 2">Square 2</option>
+            <option value="Clarke Quay Central">Clarke Quay Central</option>
+            <option value="JCube">JCube</option>
+            <option value="Jem">Jem</option>
+            <option value="HarbourFront Centre">HarbourFront Centre</option>
+          </select>
+      </div>
+      <div class="form-group p-5">
+          <label for="day">Day:</label>
+          <select class="form-control" id="day" name="day">
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+            <option value="0">Sunday</option>
+          </select>
+      </div>
+      <div class="row">
+        <div class="col-12" align="center">
+          <input type="submit" value="Continue" class="p-3 btn btn-dark text-warning font-weight-bold">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <input type="hidden" id="time_list" value="{{ time_list }}">
+  <input type="hidden" id="count_list" value="{{ count_list }}">
+
+
+  <div id="entrychart" class="m-3 graphBox">
+    <div class="ct-chart ct-major-eleventh">
+      <script>
+        var timelist = JSON.parse(document.getElementById("time_list").value);
+        var countlist = JSON.parse(document.getElementById("count_list").value);
+
+        var new_timelist = [];
+        for (i = 0, len = timelist.length; i < len; i++) {
+          s = i.toString() + ":00";
+          new_timelist.push(s);
+        }
+
+        var data = {
+          labels: new_timelist,
+          series: [countlist]
+        };
+
+        var options = {
+          high: 30,
+          low: 0,
+          axisX: {
+            showGrid: false,
+            showLabel: true
+          },
+          axisY: {
+            showGrid: false,
+            showLabel: false
+          }
+        };
+
+        new Chartist.Bar('.ct-chart', data, options);
+        
+      </script>
+      <p class="text-info m-3">&#9432; For best view, view in desktop full-screen.</p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

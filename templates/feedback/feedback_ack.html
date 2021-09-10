@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<style>
+  .acknowledgebox {
+    background-color: #EFEFEF; 
+    padding: 20%; 
+    line-height: 5px; 
+    border-radius: 5px;
+  }
+</style>
+
+<div class="p-5 acknowledgebox">
+  <div class="row">
+    <div class="col-12 p-3 d-flex justify-content-center">
+      <h1>Thank you for your feedback!</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 p-3 d-flex justify-content-center">
+      <h3>Your feedback will be reviewed by our team.</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 p-3 d-flex justify-content-center">
+      <h4>If this is your first time sending feedback, do check your email for a gift from us!</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 p-3 d-flex justify-content-center">
+      <a class="btn btn-warning font-weight-bold" href='/'>Return to Home</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

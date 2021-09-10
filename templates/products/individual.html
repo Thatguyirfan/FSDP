@@ -1,0 +1,114 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ product["name"] }} | DON DON DONKI{% endblock %}
+
+{% block content %}
+{% set prod_uuid = product["uuid"] %}
+<div class="container">
+    <br>
+    <h7> View > <a href="/products/productView">All Products</a> > {{ product["name"] }}</h7>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-5">
+            {% set photo_location = product["img_location"] %}
+            <img src="/{{ photo_location }}" alt="{{ product["name"] }}" width="100%">
+        </div>
+        <div class="col-7">
+            <h3> {{ product["name"] }}</h3>
+            <h4> ${{ product["price"] }} </h4>
+            <br>
+            <h5>Product Description</h5>
+            <p>{{ product["description"] }}</p>
+            <br>
+            <h5>Ingredients</h5>
+            <p>{{ product["ingredients"] }}</p>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModal_{{ prod_uuid }}">CHECK AVAILABILITY</button>
+            <a href="/cart/addToCart/{{ prod_uuid }}" id="{{session['userID']}}" class="btn btn-warning">ADD TO CART</a>
+        </div>
+        <!--modal-->
+        <div class="modal fade bd-example-modal-xl" id="myModal_{{ prod_uuid }}">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header text-left">
+                        <h5 class="modal-title">{{ product["name"] }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- set instocks as a name here (its supposed to be a list )-->
+
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-3">
+                                    <nav class="nav flex-column bg-light navbar-light nav-pills p-3">
+                                        {% for i in locationList %}
+                                        {% set uuid = 'a' + i["uuid"] %}
+                                            {% if loop.index == 1 %}
+                                            <a class="nav-link active" data-toggle="tab" href="#{{ uuid }}"> {{ i["name"] }}</a>
+                                            {% else %}
+                                            <a class="nav-link" data-toggle="tab" href="#{{ uuid }}"> {{ i["name"] }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </nav>
+                                </div>
+
+                                <div class="col-9">
+                                <div class="tab-content">
+                                    {% for i in locationList %}
+                                    {% set uuid = 'a' + i["uuid"] %}
+                                        {% if loop.index == 1 %}
+                                        <div class="container tab-pane active" id="{{ uuid }}">
+                                            <div class="row">
+
+                                                <div class="col-8" style="text-align: left">
+                                                    <iframe width="480" height="500" style="text-align: left" src="{{ i["iframe_link"] }}"></iframe>
+                                                </div>
+
+                                                <div class="col-4">
+                                                    <h5>{{ i["name"] }}</h5>
+                                                    <br>
+                                                    <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{ i["address"] }}</p> 
+                                                    <p><i class="fa fa-clock-o" aria-hidden="true"></i> Opening Hours: {{ i["openingHours"] }} </p>
+                                                    <p><i class="fa fa-phone" aria-hidden="true"></i> +65 {{ i["phoneNo"] }} </p> 
+                                                    <p>Instock: {{ pdList[loop.index-1]["quantity"] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="container tab-pane" id="{{ uuid }}">
+                                            <div class="row">
+
+                                                <div class="col-8" style="text-align: left">
+                                                    <iframe width="480" height="500" style="text-align: left" src="{{ i["iframe_link"] }}"></iframe>
+                                                </div>
+
+                                                <div class="col-4">
+                                                    <h5>{{ i["name"] }}</h5>
+                                                    <br>
+                                                    <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{ i["address"] }}</p> 
+                                                    <p><i class="fa fa-clock-o" aria-hidden="true"></i> Opening Hours: {{ i["openingHours"] }} </p>
+                                                    <p><i class="fa fa-phone" aria-hidden="true"></i> +65 {{ i["phoneNo"] }} </p>
+                                                    <p>Instock: {{ pdList[loop.index-1]["quantity"] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    
+                                    {% endfor %}
+                                    
+                                </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-left">
+                        <a href="/cart/addToCart/{{ prod_uuid }}" id="{{session['userID']}}" class="btn btn-warning">ADD TO CART</a>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}

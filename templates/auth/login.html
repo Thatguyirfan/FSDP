@@ -1,0 +1,41 @@
+{% extends "layouts/base.html" %}
+{% block title %}Login | DON DON DONKI{% endblock %}
+
+{% block content %}
+<br>
+{% if accSuccess %}
+<div class="alert alert-success alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accSuccess }}
+</div>
+{% elif accError %}
+<div class="alert alert-danger alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accError }}
+</div>
+{% endif %}
+
+<div class="container-sm" style="background-color: #EFEFEF; padding: 30px; line-height: 5px; border-radius: 5px">
+    <h1 class="display-4">Login</h1>
+    <br>
+    <br>
+    <p style="font-style: italic">New user? Click <a href="/auth/register">here</a>.</p>
+    <br>
+    <br>
+    <form method="POST" action="">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input name="email" id="email" type="email" placeholder="email@email.com" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input name="password" id="password" type="password" placeholder="●●●●●●●●" class="form-control" required>
+        </div>
+        <br>
+        <input type="submit" value="Submit" class="btn btn-primary"/>
+        <hr>
+        <a href="/user/forgotpassword"><p>Forgot password</p></a>
+    </form>
+</div>
+{% endblock %}

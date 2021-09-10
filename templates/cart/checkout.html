@@ -1,0 +1,306 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<style>
+    .row {
+      display: -ms-flexbox; /* IE10 */
+      display: flex;
+      -ms-flex-wrap: wrap; /* IE10 */
+      flex-wrap: wrap;
+         }
+    
+    .col-50 {
+      -ms-flex: 50%; /* IE10 */
+      flex: 50%;
+      padding: 0 16px;
+          }
+    
+    input[type=text] {
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+        }
+    
+    label {
+      margin-bottom: 10px;
+      display: block;
+      font-size: small;
+      font-style: italic;
+        }
+    
+    .icon-container {
+      margin-bottom: 20px;
+      padding: 7px 0;
+      font-size: 24px;
+        }
+    
+    #goToPayment {
+      background-color: black;
+      color: white;
+      padding: 6px;
+      margin: 0% 35%;
+      border: none;
+      width: 30%;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+        }
+    
+    #goToPayment:hover {
+      background-color: gray;
+        }
+
+    .placeOrder {
+      background-color:  #97cc9a;
+      color:black;
+      padding: 6px;
+      margin: 0 35%;
+      border: none;
+      width: 30%;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+        }
+    
+    .placeOrder:hover {
+      background-color: #a8ceaa;
+        }
+
+    .modalBtn {
+      background-color: #64635c;
+      color: white;
+      padding: 6px;
+      margin: 1% 0;
+      border: none;
+      width: 20%;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+
+     */
+    span.price {
+      float: right;
+      color: grey;
+        }
+    
+    @media (max-width: 800px) {
+      .row {
+        flex-direction: column-reverse;
+      }
+    }
+
+</style>
+
+
+<!-- Alert for invalid voucher code -->
+{% if (msg != "") %}
+<div class="alert alert-danger w-100 text-center mx-auto mt-3" role="alert">
+  {{ msg }}
+</div>
+{% endif %}
+
+
+<div class="container">
+    <div class="row">
+      <div class="col-lg-7  ">
+        <div class="pt-5">
+            <div id="accordion">
+                <div class="card border-light mb-3">
+                    <div id="headingTwo">
+                        <div class="card-header" id="headingTwo">
+                            <h5>PAYMENT</h5>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        
+                            <div class="card-body">
+                              <br>
+                              <div class="container">
+                               <div class="row">
+                                <table class="table table-borderless" id="myTable">
+                                  {% if cardList.length != 0 %}
+                                  <thead>
+                                    <tr style="color: rgb(112, 109, 109);">
+                                        <th>YOUR CARD(S)</th>
+                                    </tr>
+                                    <tr><th>CREDIT CARD/DEBIT CARD</th></tr>
+                                  </thead>
+                                  <tbody>
+                                  {% for i in cardList %}
+                                  {% set uuid = i.uuid %}
+                                  <tr>
+                                      <td style="width:30%; padding-left: 5%;"> 
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                        <label class="form-check-label" for="flexRadioDefault2" style="font-size: medium; font-style: normal;">  CARD {{ i.card_number.substring(0,4) }} ****  </label>
+                                        </td>
+                                      <td style="width:30%;">
+                                        {% if i.card_type == "VISA" %}
+                                        <i class="fab fa-cc-visa" style="color: rgb(36, 36, 167); font-size: 36px;"></i>
+                                        {% elif i.card_type == "MASTERCARD" %}
+                                        <i class="fab fa-cc-mastercard" style="font-size:36px; color: rgb(243, 141, 9);"></i>
+                                        {% elif i.card_type == "AMEX" %}
+                                        <i class="fab fa-cc-amex" style="font-size:36px;color:rgb(59, 59, 202)"></i>
+                                        {% endif %}
+                                      </td>
+                                      <td ><a href="/cart/deleteCard/{{ uuid }}"  class="btn"><i class="fa fa-trash" style="font-size: 10px;"></i></a></td>
+                                  </tr>
+                                  {% endfor %}
+                                  {% else %}
+                                  <tr>You have no added cards yet!</tr>
+                                  {% endif %}
+                                  </tbody>
+                                </table>
+                                  <input class="modalBtn" type="button" data-toggle="modal" data-target="#addNewCard" value="+ Add New Card">
+                                  <br>
+                                  <div class="modal fade" id="addNewCard" tabindex="-1" role="dialog" aria-labelledby="addNewCardTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                      <div class="modal-content">
+                                        <div>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: 2%;">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="padding">
+                                            <div class="row">
+                                              <div class="container-fluid d-flex justify-content-center">
+                                                  <div class="col">
+                                                    <form method="POST" action="/cart/addCard">
+                                                      <div class="card border-light mb-3">
+                                                          <div class="card-header">
+                                                              <div class="row">
+                                                                  <div class="col-md-6"> <span>CREDIT/DEBIT CARD PAYMENT</span> </div>
+                                                                  <div class="col-md-6 text-right" style="margin-top: -5px;"> <img src="https://img.icons8.com/color/36/000000/visa.png"> <img src="https://img.icons8.com/color/36/000000/mastercard.png"> <img src="https://img.icons8.com/color/36/000000/amex.png"> </div>
+                                                              </div>
+                                                          </div>
+                                                          <div class="card-body" style="height: 350px">
+                                                            <label for="name" class="control-label" >Card Holder Name</label>
+                                                            <input type="text" name="name" id="name"  class="input-lg form-control" maxlength="64" required>
+                                                            
+                                                            <div class="row">
+                                                              <div class="col-md-6">
+                                                                <label for="cardNo" class="control-label">Card Number</label> 
+                                                                <input type="tel" name="cardNo" id="cardNo" class="input-lg form-control cc-number" placeholder="•••• •••• •••• ••••" maxlength="19" required>
+                                                              </div>
+
+                                                              <div class="col-md-6">
+                                                                <label for="cardType" class="control-label" class="input-lg form-control cc-type">Card Type</label>
+                                                                <select name="cardType" id="cardType" class="input-lg form-control cc-type">
+                                                                  <option value="VISA">VISA</option>
+                                                                  <option value="MASTERCARD">MASTERCARD</option>
+                                                                  <option value="AMEX">AMEX</option>
+                                                                </select>
+                                                              </div>
+                                                            </div>
+                                                            <br>  
+                                                            <div class="row">
+                                                                  <div class="col-md-6">
+                                                                      <label for="expiry" class="control-label">Card Expiry</label> 
+                                                                      <input type="tel" name="expiry" id="expiry" class="input-lg form-control cc-exp" placeholder="•• / ••" maxlength="5" required>
+                                                                  </div>
+                                                                  <div class="col-md-6">
+                                                                      <label for="cvv" class="control-label">Card CVV</label> 
+                                                                      <input type="tel" name="cvv" id="cvv" class="input-lg form-control cc-cvc" placeholder="••••" maxlength="4" required>
+                                                                  </div>
+                                                              </div>
+                                                              <br>
+                                                              <div class="row">
+                                                                <div class="col-md-6">
+                                                                  <input value="CLOSE" type="button" class="btn btn-secondary btn-lg form-control" data-dismiss="modal" style="font-size: .8rem;">
+                                               
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                  <input value="ADD CARD" type="submit" class="btn btn-success btn-lg form-control" style="font-size: .8rem;">
+                                                                </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                    </form>
+                                                  </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="container">
+                                    <div class="deliveryDetails">
+                                      <h5 class="mb-0">
+                                        <input value="CONTINUE TO DELIVERY " class="btn" id="goToPayment" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    </h5>
+                                    </div>
+                                </div>
+                            </div>
+                          </div> 
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                          <div class="card-body">
+                              <p></p>
+                              <p></p>
+                              <h6>Please make sure that this is the right address!</h6>
+                              <p style="color: gray;">You can edit your address in your profile page. </p>
+                          </div>
+                        </div>
+                </div>
+                <br>
+                <div class="card border-light mb-3">
+                  <div class="card-header" id="headingTwo">
+                    <h5>DELIVERY</h5>
+                  </div>
+                  <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div class="card-body">
+                    <br>
+                    <br>
+                    <h6>DELIVERY ADDRESS</h6>
+                    <br>
+                    <p>
+                      {{ user.name }} <br>
+                      {{ user.email }} <br>
+                      {{ user.phone }} <br>
+                      {{ user.address }} <br>
+                    </p>
+                    <a href="/orders/thankyou" class="placeOrder"><input type="btn" value="PLACE ORDER" class="btn"></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div> 
+    </div> 
+    <div class="col-lg-4" style="margin-top: 5%;">
+      <div class="container">
+        {% set total = total %}
+        <h4 style="margin-bottom: 5%;">ORDER SUMMARY</h4>
+        <hr>
+        <p>Subtotal<span class="price"  style="color:black; float: right;">${{ total }}</span></p>
+        <p>Delivery <span class="price" style="color:black; float: right;">$3.00</span></p>
+        {% if ((voucherValue != null) or (voucherValue != undefined)) %}
+          <p>Discount<span class="price" style="color:black; float:  right;">- ${{ voucherValue }}</span></p>
+        {% else %}
+          <p>Discount<span class="price" style="color:black; float:  right;">N.A.</span></p>
+        {% endif %}
+        <p></p>
+        <h5>Total <span class="price" style="color:black; float: right;"><b>${{ total + 3 }}</b></span></h5>
+      </div>
+      <br>
+      <div class="container">
+        <form action="/cart/checkout" method="GET">
+          <input type="submit" value="APPLY" class="btn btn-secondary" style="float: right" />
+          <div style="overflow: hidden; padding-right: .5em;">
+            <input type="text" placeholder="Enter Promo Code" name="voucher" style="width: 100%;"/>
+            <p class="text-info">&#9432; Do not refresh/leave the page after applying a voucher code.</p>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
+{% endblock %}

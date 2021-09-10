@@ -1,0 +1,79 @@
+{% extends "layouts/base.html" %}
+{% block title %}{% if reg %}Register{% else %}Create Account{% endif %} | DON DON DONKI{% endblock %}
+
+{% block content %}
+<br>
+{% if accSuccess %}
+<div class="alert alert-success alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accSuccess }}
+</div>
+{% elif accError %}
+<div class="alert alert-danger alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accError }}
+</div>
+{% endif %}
+
+<div class="container-sm" style="background-color: #EFEFEF; padding: 30px; line-height: 5px; border-radius: 5px">
+    <h1 class="display-4">{% if reg %}Register{% else %}Create Account{% endif %}</h1>
+    <br>
+    <br>
+    {% if reg %}
+    <p style="font-style: italic">Returning user? Click <a href="/auth/login">here</a>.</p>
+    {% endif %}
+    <form method="POST" action="">
+        <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input id="fullname" name="fullname" type="text" placeholder="John Doe" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input id="address" name="address" type="text" placeholder="33 Smith Street" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="90000000" class="form-control" pattern="[3,6,8-9]{1}[0-9]{7}" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="email@email.com" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="●●●●●●●●" class="form-control" required>
+        </div>
+        <br>
+        {% if not reg %}
+        <div class="form-group">
+            <label for="salary">Salary</label>
+            <input id="salary" name="salary" type="number" placeholder="3000" class="form-control" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="workinglocation">Working Location</label>
+            <select id="workinglocation" name="workinglocation" required>
+                <option value="Clarke Quay Central">Clarke Quay</option>
+                <option value="Orchard Central">Orchard</option>
+                <option value="City Square Mall">City Square</option>
+                <option value="Square 2">Square 2</option>
+                <option value="100AM">100AM</option>
+                <option value="JCube">JCube</option>
+                <option value="Jem">Jem</option>
+                <option value="HarbourFront Centre">HarbourFront Centre</option>
+            </select>
+        </div>
+        <br>
+        {% endif %}
+        <input type="submit" value="Submit" class="btn btn-primary"/>
+        {% if reg %}
+        <hr>
+        <a href="/manage/manageemployees"><p>Go back</p></a>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

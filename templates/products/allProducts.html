@@ -1,0 +1,164 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block css %}
+<style>
+    .dropbtn {
+      background-color: #04AA6D;
+      color: white;
+      padding: 5px;
+      font-size: 16px;
+      border: none;
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    
+    .dropdown-content a {
+      color: black;
+      text-align: center;
+      padding: 5px;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .dropdown-content a:hover {background-color: #ddd;}
+    
+    .dropdown:hover .dropdown-content {display: block;}
+    
+    .dropdown:hover .dropbtn {background-color: #3e8e41;}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function insertParam(key, value) {
+        key = encodeURIComponent(key);
+        value = encodeURIComponent(value);
+
+        // kvp looks like ['key1=value1', 'key2=value2', ...]
+        var kvp = document.location.search.substr(1).split('&');
+        let i=0;
+
+        for(; i<kvp.length; i++){
+            if (kvp[i].startsWith(key + '=')) {
+                let pair = kvp[i].split('=');
+                pair[1] = value;
+                kvp[i] = pair.join('=');
+                break;
+            }
+        }
+
+        if(i >= kvp.length){
+            kvp[kvp.length] = [key,value].join('=');
+        }
+
+        // can return this or...
+        let params = kvp.join('&');
+
+        // reload page with new params
+        document.location.search = params;
+    }
+
+    function clearURL() {
+        return document.location = "productView";
+    }
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<!--Side Bar-->
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 p-3">
+            <!--Search bar-->
+            <div>
+                <form method="POST" action="/products/search" class="form-inline mt-2 mt-md-0">
+                    <div class="form-group">
+                        <input type="text" placeholder="Search.." name="search">
+                        <button class="btn" type="submit"><i  class="fa fa-search" style="font-size: 25px"></i></button>
+                     </div>
+                </form>
+            </div>
+            <!--try using navbar-->
+            <div>
+                <h5>VIEW BY</h5>
+                <nav class="nav flex-column bg-light navbar-light nav-pills yellow p-3">
+                    <a class="nav-link" data-toggle="tab" href="/products/productView" onclick="clearURL()">View All</a>
+                    <a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category', 'snacks')">Snacks</a>
+                    <a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category', 'fruits')">Fruits</a>
+                    <a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category', 'drinks')">Drinks</a>
+                    <a class="nav-link" data-toggle="tab" href="#" onclick="insertParam('category', 'instantFood')">Instant Food</a>
+                </nav>
+            </div>
+        </div>
+
+
+        <!--other part of view-->
+        <div class="col-md-9 w-75 p-3">
+
+            <div class="row flex-row bg-light navbar-light nav-pills yellow p-2">
+                <div class="p-2">
+                    <p>SORT BY</p>
+                </div>
+                <div class="dropdown p-2">
+                    <button class="dropbtn" onclick="clearURL()">Relavence</button>
+                </div>
+                <div class="dropdown p-2">
+                    <button class="dropbtn" onclick="insertParam('order', 'oldest')">Oldest</button>
+                </div>
+                <div class="dropdown p-2">
+                    <button class="dropbtn" onclick="insertParam('order', 'latest')">Latest</button>
+                </div>
+                <div class="dropdown p-2">
+                    <button class="dropbtn">Price</button>
+                    <div class="dropdown-content">
+                        <button onclick="insertParam('order', 'low_high')">Price: Low to High</button>
+                        <button onclick="insertParam('order', 'high_low')">Price: High to Low</button>
+                    </div>
+                </div>
+                  
+            </div>
+            
+            <h3>View > <a href="/products/productView">All Products</a></h3>
+            <div class="row" id="product_container">
+            <p></p>
+            {% if prod_list | length == 0 %}
+                <div class="col-md" style="text-align: center;">
+                <h4>The product that you are searching for is not found! <i style='font-size:24px' class='far'>&#xf119;</i> </h4>
+                <p>&nbsp;</p>
+                <a href="/products/productView" class="btn btn-warning p-1.5">BACK TO PRODUCT PAGE</i></a>
+            </div>
+            {% else %}
+            {% for i in prod_list %}
+            {% set uuid = i["uuid"] %}
+                <!--Individual Product-->
+                <div class="col-4 p-3">
+                    <img src="/{{ i["img_location"] }}" alt="Product Image" height="150px">
+                    <h4> {{ i["name"] }}</h4>
+                    <p>$ {{ i["price"] }} </p>
+                    <hr>
+                    <a href="/products/indivProd/{{ uuid }}" class="btn btn-warning p-1.5"><i class="fa fa-info-circle" aria-hidden="true"></i>
+                         MORE INFORMATION</a>
+                    <a href="/cart/addToCart/{{ uuid }}" id="{{session['userID']}}" class="btn btn-warning p-1.5"><i class="fa fa-shopping-cart" aria-hidden="true"></i> ADD TO CART</a>
+                </div>
+            {% endfor %}
+            {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

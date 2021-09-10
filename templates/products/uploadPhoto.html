@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{ % block css % }
+<style>
+  #formDiv{
+    box-shadow: 5px 10px #888888;
+  }
+</style>
+{ % endblock % }
+
+{% block content %}
+<div class="row">
+  <div class="pt-4 pl-5" align="left" id="shadowDiv">
+      <h4 class="p-3 bg-dark text-warning">UPLOAD PRODUCT PHOTO</h4>
+  </div>
+</div>
+
+<div class="row justify-content-center p-4">
+
+  <div class="col-8 d-flex bg-light p-3" id="shadowDiv">
+    <form action="/products/uploadPhoto/{{ x["uuid"] }}" method="POST" enctype="multipart/form-data">
+        
+        <div class="row">
+            <p>Upload Photo for {{ x["name"] }}</p>
+        </div>
+        <div class="row">
+            <input type="file" name="file">
+        </div>
+
+        <div class="row">
+            <div class="col-12 p-3">
+                <input type="submit" value="Submit" class="p-3 btn btn-dark text-warning font-weight-bold" id="shadowDiv">
+            </div>
+        </div>
+
+    </form>
+
+  </div>
+  
+</div>
+{% endblock %}

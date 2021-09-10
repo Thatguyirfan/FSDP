@@ -1,0 +1,94 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .container
+    {
+        margin: 5% 10%;
+    }
+</style>
+
+<div class="container">
+    <table class="table">
+        <h4 style="margin-right: 40%; margin-left: 40%; margin-bottom: 5%;">ALL ORDERS<strong></strong></h4>
+        <tr> </tr>
+        <tr>
+            <th>ORDER ID</th>
+            <th>ORDER TIME</th>
+            <th>COMPLETED TIME</th>
+            <th>DELIBERY STATUS</th>
+        </tr>
+        {% for i in range (packingOrders.length) %}
+        {% set uuid = packingOrders[i].uuid %}
+        {% if diffList[i] >= 5 %}
+        <tr>
+            <div class="alert alert-danger">
+            Order  <strong>{{ uuid }}</strong>   needs to be sent out <strong>NOW</strong>!
+            </div>
+        </tr>
+        {% elif diffList[i] >= 3 %}
+        <tr>
+            <div class="alert alert-warning">
+            Order  <strong>{{ uuid }}</strong>   needs to be sent out soon!
+            </div>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>{{ uuid }}</td>
+            <td>{{ packingOrders[i].order_time }}</td>
+            <td>NA</td>
+            <td>
+                <form action="/orders/update/{{ uuid }}" method="POST">
+                    <label for="delivery"></label>
+                    <select id="delivery" name="delivery">
+                        <option value="PACKING">PACKING</option>
+                        <option value="OTW">OTW</option>
+                    </select>
+                    <input type="submit">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        {% for i in otwOrders %}
+        {% set uuid = i.uuid %}
+        <tr>
+            <td>{{ uuid }}</td>
+            <td>{{ i.order_time }}</td>
+            <td>NA</td>
+            <td>
+                <form action="/orders/update/{{ uuid }}" method="POST">
+                    <label for="delivery"></label>
+                    <select id="delivery" name="delivery">
+                        <option value="OTW">OTW</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                    <input type="submit">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <table class="table">
+        <h6>COMPLETED ORDERS<strong></strong></h6>
+        <tr> </tr>
+        <tbody>
+            {% for i in completedOrders %}
+            {% set uuid = i.uuid %}
+            <tr>
+                <td>{{ uuid }}</td>
+                <td>{{ i.order_time }}</td>
+                <td>{{ i.completed_time }}</td>
+                <td>{{ i.delivery_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+</script>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{ % block css % }
+<style>
+  #formDiv{
+    box-shadow: 5px 10px #888888;
+  }
+</style>
+{ % endblock % }
+
+{% block content %}
+<div class="row">
+  <div class="pt-4 pl-5" align="left" id="shadowDiv">
+      <h4 class="p-3 bg-dark text-warning">PURCHASE INSTOCKS</h4>
+  </div>
+</div>
+
+<div class="row justify-content-center p-4">
+
+   <div class="col-8 d-flex bg-light p-3" id="shadowDiv">
+        <form method="post" action="/products/orderInstock/{{ x["uuid"] }}" class="p-3">
+
+            <div class="row p-3">
+            <h3>Instocks for {{ x["name"] }}</h3>
+            </div>
+            <hr>
+            <div class="row">
+            {% for i in locationList %}
+            {% set uuid = i["uuid"] %}
+                {% if pdList[loop.index - 1]["quantity"] <= 10 %}
+                <div class="col-md-4 form-group mb-3">
+                    <p> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ i["name"] }}: {{ pdList[loop.index - 1]["quantity"] }}</p>
+                </div>
+                {% else %}
+                <div class="col-md-4 form-group mb-3">
+                    <p>{{ i["name"] }}: {{ pdList[loop.index - 1]["quantity"] }}</p>
+                </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+
+            <div class="row" id="inputDiv">
+                {% for i in locationList %}
+                {% set uuid = i["uuid"] %}
+                  <div class="col-md-4 form-group mb-3">
+                    <label for="" class="col-form-label">{{ i["name"]}} </label>
+                    <input type="text" class="form-control" name="{{ uuid }}" id="{{ uuid }}" placeholder="0" required>
+                  </div>
+                {% endfor %}
+            </div>
+    
+            <div class="row">
+                <div class="col-12 p-3">
+                    <input type="submit" value="Submit" class="p-3 btn btn-dark text-warning font-weight-bold" id="shadowDiv">
+                </div>
+            </div>
+
+        </form>
+
+   </div>
+  
+</div>
+{% endblock %}

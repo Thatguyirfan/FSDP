@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-warning">
+    <!-- Links -->
+    <ul class="navbar-nav">
+    <!-- Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link" href="/"><strong>HOME</strong></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/products/productView"><strong>PRODUCTS</strong></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/records/storeentry"><strong>STORE ENTRY</strong></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/records/storecount"><strong>STORE COUNT</strong></a>
+        </li>
+    </ul>
+    <!-- logo -->
+    <a class="navbar-brand mx-auto d-block" href="/"><img src="/public/img/dondon_logo.png" alt="DON DON DONKI" width = "150"></a>
+    <!--- search, acc, cart --->
+    <!--Search bar-->
+    <div>
+        <form method="POST" action="/products/search" class="form-inline mt-2 mt-md-0">
+            <div class="form-group">
+                <input type="text" placeholder="Search.." name="search">
+                <button class="btn" type="submit"><i  class="fa fa-search" style="font-size: 25px"></i></button>
+            </div>
+        </form>
+    </div>
+    <ul class="nav-bar nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/auth/login"><i class='fas fa-user-circle' style="font-size:25px; color:black"></i></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/cart"><i class='fas fa-shopping-cart' style="font-size:25px; color:black"></i></a>
+        </li>
+    </ul>
+</nav>
+

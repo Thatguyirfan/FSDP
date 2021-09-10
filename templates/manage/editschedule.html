@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% block title %}Edit Schedule | DON DON DONKI{% endblock %}
+
+{% block content %}
+<br>
+{% if accSuccess %}
+<div class="alert alert-success alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accSuccess }}
+</div>
+{% elif accError %}
+<div class="alert alert-danger alert-dismissible container-sm">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ accError }}
+</div>
+{% endif %}
+
+<div class="container-sm" style="background-color: #EFEFEF; padding: 30px; line-height: 5px; border-radius: 5px">
+    <h1 class="display-4">Edit Schedule</h1>
+    <br>
+    <br>
+    <form method="POST" action="">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Time</th>
+                    {% for day, item in schedule %}
+                    <th scope="col">{{ day }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            {% set times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"] %}
+            <tbody>
+                {% for time in times %}
+                {% set outer_loop = loop %}
+                <tr>
+                    <th scope="row">{{ time }}</th>
+                    {% for day, item in schedule %}
+                    <td><input id="{{day}}_{{outer_loop.index0}}" name="{{day}}_{{outer_loop.index0}}" type="text" class="form-control" value="{{item[outer_loop.index0]}}"></td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" value="Submit" class="btn btn-primary"/>
+        <hr>
+        <a href="/manage/manageemployees"><p>Go back</p></a>
+    </form>
+</div>
+{% endblock %}

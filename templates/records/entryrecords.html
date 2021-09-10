@@ -1,0 +1,114 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="pt-4 pl-5" align="left">
+        <h4 class="p-3 bg-dark text-warning">ENTRY RECORDS - {{ store }}</h4>
+    </div>
+</div>
+
+
+<div class="row">
+  <div class="pl-5 pt-3">
+    <form action="/records/entries" method="GET">
+      <div class="form-group p-2">
+        {% if (user_role == "employee") %}
+          <input type="hidden" class="form-control" name="store" id="store" value="{{ store }}">
+        {% elif (user_role == "manager") %}
+        <label for="store"><strong>Store:</strong></label>
+          <div class="form-group p-3">
+            <select class="form-control" name="store">
+              <option value="Orchard Central">Orchard Central</option>
+                <option value="100AM">100AM</option>
+                <option value="City Square Mall">City Square Mall</option>
+                <option value="Square 2">Square 2</option>
+                <option value="Clarke Quay Central">Clarke Quay Central</option>
+                <option value="JCube">JCube</option>
+                <option value="Jem">Jem</option>
+                <option value="HarbourFront Centre">HarbourFront Centre</option>
+            </select>
+          </div>
+        {% endif %}
+        </div>
+      <input type="submit" value="Apply filter" class="p-2 btn btn-dark text-warning button font-weight-bold">
+    </form>
+  </div>
+
+    <!-- Div for search bar -->
+  <div class="search-container justify-content-right m-5 ml-auto mt-auto">
+    <h6>Search by NRIC:</h6>
+    <form action="/records/entries" method="GET">
+      <input type="text" placeholder="Search..." name="search">
+      <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+  </div>
+</div>
+
+
+<div class="p-5">
+  <table class="table table-striped">
+        <th>Date</th>
+        <th>Entry Time</th>
+        <th>Exit Time</th>
+        <th>NRIC</th>
+        <th>Temperature (°C)</th>
+        <th>Mobile No.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in entry_list %}
+        {% if i["temperature"] > 37.4 %}
+          <tr class="table-danger">
+        {% else %}
+          <tr>
+        {% endif %}
+            <td>{{ i["date"].getDate() }}/{{ i["date"].getMonth() }}/{{ i["date"].getFullYear() }}</td>
+            <td>{{ i["entrytime"] }}</td>
+            <td>{{ i["exittime"] }}</td>
+            <td>{{ i["nric"] }}</td>
+            <td>{{ i["temperature"] }}</td>
+            <td>{{ i["mobile"] }}</td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="break"></div>
+
+  <nav aria-label="Page navigation example" class="nav justify-content-center">
+    <ul class="pagination">
+    {% if (page > 1) %}
+      <li class="page-item">
+        <a class="page-link" href="/records/entries/?store={{ store }}&page={{ 1 }}" aria-label="First">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">First</span>
+        </a>
+      </li>
+      <li class="page-item"><a class="page-link" href="/records/entries/?store={{ store }}&page={{ page-1 }}">Previous</a></li>
+    {% endif %}
+
+    {% for i in range(iterator, endLink+1) %}
+      {% if (i == page) %}
+        <li class="page-item"><a class="page-link font-weight-bold" href="/records/entries/?store={{ store }}&page={{ i }}">{{ i }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="/records/entries/?store={{ store }}&page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if (page < noOfPages) %}
+      <li class="page-item"><a class="page-link" href="/records/entries/?store={{ store }}&page={{ page+1 }}">Next</a></li>
+      <li class="page-item">
+        <a class="page-link" href="/records/entries/?store={{ store }}&page={{ noOfPages }}" aria-label="Last">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Last</span>
+        </a>
+      </li>
+    {% endif %}
+    </ul>
+  </nav>
+
+</div>
+
+{% endblock %}

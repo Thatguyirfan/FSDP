@@ -1,0 +1,266 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+{% block scripts %}
+
+<script>
+  function replyFunc(button) {
+    var replyButton = button;
+    var id = replyButton.id.slice(-1);
+    if (replyButton.innerHTML == "Reply")
+    {
+      replyButton.innerHTML = "Close";
+      replyButton.classList.remove('btn-success');
+      replyButton.classList.add('btn-danger');
+      document.getElementById('replyBox'+id).classList.remove('d-none');
+    }
+    else
+    {
+      replyButton.innerHTML = "Reply";
+      replyButton.classList.remove('btn-danger');
+      replyButton.classList.add('btn-success');
+      document.getElementById('replyBox'+id).classList.add('d-none');
+    }
+  }
+</script>
+
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .graphBox {
+    background-color: #DCDCDC;
+  }
+
+  .box {
+    float: left;
+    margin-right: 5px;
+    height: 10px;
+    width: 10px;
+    border: 1px solid black;
+    clear: both;
+  }
+
+  .compliment {
+    background-color: #D70206;
+  }
+
+  .suggestion {
+    background-color: #F05B4F;
+  }
+
+  .complaint {
+    background-color: #F4C63D;
+  }
+
+  .other {
+    background-color: #D17905;
+  }
+
+  .change {
+    font-size: 150%;
+  }
+
+  .increase {
+    color: green;
+  }
+
+  .decrease {
+    color: red;
+  }
+
+  .chartBox {
+    border: medium dashed; 
+    border-radius: 5px;
+  }
+
+</style>
+
+
+{% if (replyStatus) %}
+  <div class="alert alert-success w-100 text-center mx-auto mt-3" role="alert">
+    <i class="fa fa-thumbs-up" aria-hidden="true"></i>  Email has been successfully sent
+  </div>
+{% endif %}
+
+<div class="row">
+    <div class="pt-4 pl-5" align="left">
+        <h4 class="p-3 bg-dark text-warning">Customer Feedback</h4>
+    </div>
+</div>
+
+<div class="row">
+  <div class="pl-5 pt-3">
+    <form action="/feedback/view" method="GET">
+      <div class="form-group p-2">
+        <p><strong>Display: </strong></p>
+        <div class="form-group p-3">
+          <label for="store">Store:</label>
+          <select class="form-control" name="store" id="store">
+              <option value="All">All</option>
+              <option value="Orchard Central">Orchard Central</option>
+              <option value="100AM">100AM</option>
+              <option value="City Square Mall">City Square Mall</option>
+              <option value="Square 2">Square 2</option>
+              <option value="Clarke Quay Central">Clarke Quay Central</option>
+              <option value="JCube">JCube</option>
+              <option value="Jem">Jem</option>
+              <option value="HarbourFront Centre">HarbourFront Centre</option>
+          </select>
+      </div>
+      <div class="form-group p-3">
+        <label for="reason">Reason:</label>
+        <select class="form-control" name="reason" id="reason">
+            <option value="All">All</option>
+            <option value="Compliment">Compliment</option>
+            <option value="Suggestion">Suggestion</option>
+            <option value="Complaint">Complaint</option>
+            <option value="Others">Others</option>
+        </select>
+    </div>
+      </div>
+      <input type="submit" value="Apply filter" class="p-2 btn btn-dark text-warning font-weight-bold">
+    </form>
+  </div>
+
+
+  <!-- Div for search bar -->
+  <div class="search-container justify-content-right m-5 ml-auto mt-auto">
+    <h6>Search by name:</h6>
+    <form action="/feedback/view" method="GET">
+      <input type="text" placeholder="Search..." name="search">
+      <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+  </div>
+</div>
+
+
+<div class="p-5">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Store</th>
+        <th>Reason</th>
+        <th>Name</th>
+        <th>Mobile</th>
+        <th>Email</th>
+        <th>Feedback</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in feedback_list %}
+        {% if (i["status"] == 1) %}
+        <tr style="background-color: #FFFF99;">
+        {% else %}
+        <tr>
+        {% endif %}
+          <td>{{ i["date"].getDate() }}/{{ i["date"].getMonth()+1 }}/{{ i["date"].getFullYear() }}</td>
+          <td>{{ i["store"] }}</td>
+          <td>{{ i["reason"] }}</td>
+          <td>{{ i["name"] }}</td>
+          <td>{{ i["mobile"] }}</td>
+          <td>{{ i["email"] }}</td>
+          <td>{{ i["message"] }}</td>
+          <td>
+            {% if (i["status"] == 1) %}
+              <button type="button" id="replyButton{{ loop.index0 }}" class="btn btn-success" onclick="replyFunc(this)">Reply</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% if (i["status"] == 1) %}
+          <tr id="replyBox{{ loop.index0 }}" class="d-none">
+            <td colspan="8">
+              <h5>Sending email to {{ i["email"] }}...</h5>
+              <form action="/feedback/reply" method="POST">
+                <textarea name="reply" id="reply" cols="80" rows="6"></textarea>
+                <input type="hidden" name="email" id="email" value="{{ i['email'] }}">
+                <input type="hidden" name="uuid" id="uuid" value="{{ i['uuid'] }}">
+                <input type="Submit" value="Reply" class="p-3 btn btn-success font-weight-bold">
+              </form>
+            </td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="break"></div>
+
+  <nav aria-label="Page navigation" class="nav justify-content-center">
+    <ul class="pagination">
+    {% if (page > 1) %}
+      <li class="page-item">
+        <a class="page-link" href="/feedback/view/?store={{ store }}&reason={{ reason }}&page={{ 1 }}" aria-label="First">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">First</span>
+        </a>
+      </li>
+      <li class="page-item"><a class="page-link" href="/feedback/view/?store={{ store }}&reason={{ reason }}&page={{ page-1 }}">Previous</a></li>
+    {% endif %}
+
+    {% for i in range(iterator, endLink+1) %}
+      {% if (i == page) %}
+        <li class="page-item"><a class="page-link font-weight-bold" href="/feedback/view/?store={{ store }}&reason={{ reason }}&page={{ i }}">{{ i }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="/feedback/view/?store={{ store }}&reason={{ reason }}&page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if (page < noOfPages) %}
+      <li class="page-item"><a class="page-link" href="/feedback/view/?store={{ store }}&reason={{ reason }}&page={{ page+1 }}">Next</a></li>
+      <li class="page-item">
+        <a class="page-link" href="/feedback/view/?store={{ store }}&reason={{ reason }}&page={{ noOfPages }}" aria-label="Last">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Last</span>
+        </a>
+      </li>
+    {% endif %}
+    </ul>
+  </nav>
+</div>
+
+<input type="hidden" name="series" id="series" value="{{ series }}">
+
+<div class="row justify-content-center graphBox">
+ <h1 class="m-3">
+   Feedback Statistics{% if (store != "All") %} - {{ store }} {% endif %}
+  </h1>
+</div>
+<div class="row graphBox">
+  <!-- Div for stats -->
+  <div class="m-3 ml-5">
+    <h5 class="mb-3">Increase/Decrease from last month:</h5>
+    <h6><div class='box compliment'></div>Compliments: <span class="change {% if complimentChange > 0 %}increase{% else %}decrease{% endif %}">{{ complimentChange }}%</span></h6>
+    <h6><div class='box suggestion'></div>Suggestions: <span class="change {% if suggestionChange > 0 %}increase{% else %}decrease{% endif %}">{{ suggestionChange }}%</span></h6>
+    <h6><div class='box complaint'></div>Complaints: <span class="change {% if complaintChange > 0 %}increase{% else %}decrease{% endif %}">{{ complaintChange }}%</span></h6>
+    <h6><div class='box other'></div>Others: <span class="change {% if otherChange > 0 %}increase{% else %}decrease{% endif %}">{{ otherChange }}%</span></h6>
+  </div>
+
+  <!-- Div for graph -->
+  <div id="fb-stats" class="ct-chart ct-major-eleventh m-5 chartBox">
+    <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    <script>
+      var data = {
+        labels: ['3 Months Ago', '2 Months Ago', 'Last Month', 'This Month'],
+        series: JSON.parse(document.getElementById("series").value)
+      };
+
+      var options = {
+        showPoint: false,
+        lineSmooth: false,
+        axisY: {
+          onlyInteger: true
+        }
+      };
+
+      new Chartist.Line('.ct-chart', data, options);
+    </script>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+<style>
+  #title
+  {
+    text-align: center;
+    margin: 5%;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h3 id="title">PURCHASE HISTORY</h3>
+  <ul class="nav nav-tabs nav-fill" id="purchHist" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link " id="ship-tab" data-toggle="tab" href="#ship" role="tab" aria-controls="ship" aria-selected="false">TO SHIP</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="recieve-tab" data-toggle="tab" href="#recieve" role="tab" aria-controls="recieve" aria-selected="false">TO RECIEVE</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" id="completed-tab" data-toggle="tab" href="#completed" role="tab" aria-controls="completed" aria-selected="true">COMPLETED</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="purchHistContent">
+    <div class="tab-pane fade" id="ship" role="tabpanel" aria-labelledby="ship-tab">
+      {% if ordersToShip.length == 0 %}
+      <h5 style ="text-align: center; padding-bottom: 5%;"><img style ="width: 10%; padding-top: 5%;" src="/public/img/orders.png" alt=" " width = "100">
+      <br>
+      <br>
+        you have no orders in this section yet.</h5>
+      {% else %}
+      <p> </p>
+      <table class="table table-borderless">
+        <tbody>
+          <thead>
+            <th> </th>
+            <th>ITEM(S) </th>
+            <th>ORDER TIME</th>
+            <th>DELIVERED TO</th>
+            <th>ORDER ID</th>
+          </thead>
+          {% for i in shipCount %}
+          {% set uuid = ordersToShip[i].uuid %}
+          <tr>
+            <td><img src="/public/img/packingOrder.jpg"  style="width:100%;"></td>
+            <td style="width:10%;">{{ quantityShipList[i] }} items</td>
+            <td style="width:20%;">{{ ordersToShip[i].order_time }}</td> 
+            <td style="width:20%;">{{ ordersToShip[i].address }}</td>
+            <td style="width:30%;">{{ uuid }}</td>
+            <td style="width:15%;"> 
+              <div>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal_{{ uuid }}">VIEW ORDER</button>
+                <div class="modal fade bd-example-modal-lg" id="myModal_{{ uuid }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">VIEW ORDER</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="table table-borderless">
+                          <tbody>
+                            {% for x in range(finalProdShipList[i].length) %}
+                            {% if finalProdShipList[i][x].img_location == null %}            
+                            {% set photo_location = "dynamic/product_photos/photo404" %}
+                            {% else %}
+                                {% set photo_location = finalProdShipList[i][x].img_location %}
+                            {% endif %}
+                            <tr>
+                              <td style="width:15%;"><img src="/{{ photo_location }}" alt="product image" width="100"></td>
+                              <td style="width:25%;padding-top: 5%;">{{ finalProdShipList[i][x].name }}</td>
+                              <td style="width:15%;padding-top: 5%;">${{ finalProdShipList[i][x].price }}</td>
+                              <td style="width:15%;padding-top: 5%;">{{ shipOrderDetails[i][x].quantity }}</td>
+                              <td style="width:15%;padding-top: 5%;">${{ finalProdShipList[i][x].price * shipOrderDetails[i][x].quantity }}</td> 
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        <h6 style="color: gray;">Order ID: {{ uuid }}</h6>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">CLOSE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="recieve" role="tabpanel" aria-labelledby="recieve-tab">
+      {% if ordersToRecieve.length == 0 %}
+      <h5 style ="text-align: center; padding-bottom: 5%;"><img style ="width: 10%; padding-top: 5%;" src="/public/img/orders.png" alt=" " width = "100">
+        <br>
+        <br>
+          you have no orders in this section yet.</h5>
+      {% else %}
+      <p> </p>
+      <table class="table table-borderless">
+        <tbody>
+          <thead>
+            <th> </th>
+            <th>ITEM(S) </th>
+            <th>ORDER TIME</th>
+            <th>DELIVERED TO</th>
+            <th>ORDER ID</th>
+          </thead>
+          {% for i in recieveCount %}
+          {% set uuid = ordersToRecieve[i].uuid %}
+          <tr>
+            <td><img src="/public/img/delivery.jpg"  style="width:100%;"></td>
+            <td style="width:10%;">{{ quantityRecList[i] }} items</td>
+            <td style="width:18%;">{{ ordersToRecieve[i].order_time }}</td> 
+            <td style="width:20%;">{{ ordersToRecieve[i].address }}</td>
+            <td style="width:30%;">{{ uuid }}</td>
+            <td style="width:15%;">
+              <div>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal_{{ uuid }}">VIEW ORDER</button>
+                <div class="modal fade bd-example-modal-lg" id="myModal_{{ uuid }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">VIEW ORDER</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="table">
+                          <tbody>
+                            {% for x in range(finalProdRecList[i].length) %}
+                            {% if finalProdRecList[i][x].img_location == null %}            
+                            {% set photo_location = "dynamic/product_photos/photo404" %}
+                            {% else %}
+                                {% set photo_location = finalProdRecList[i][x].img_location %}
+                            {% endif %}
+                            <tr>
+                                <td style="width:15%;"><img src="/{{ photo_location }}" alt="product image" width="100%"></td>
+                                <td style="width:25%;padding-top: 5%;">{{ finalProdRecList[i][x].name }}</td>
+                                <td style="width:15%;padding-top: 5%;">${{ finalProdRecList[i][x].price }}</td>
+                                <td style="width:15%;padding-top: 5%;">{{ recieveOrdersDetails[i][x].quantity }}</td>
+                                <td style="width:15%;padding-top: 5%;">${{ finalProdRecList[i][x].price * recieveOrdersDetails[i][x].quantity }}</td> 
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        <h6 style="color: gray;">Order ID: {{ uuid }}</h6>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">CLOSE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade show active" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+      {% if ordersComp.length == 0 %}
+      <h5 style ="text-align: center; padding-bottom: 5%;"><img style ="width: 10%; padding-top: 5%;" src="/public/img/orders.png" alt=" " width = "100">
+        <br>
+        <br>
+          you have no orders in this section yet.</h5> 
+      {% else %}
+      <p> </p>
+      <table class="table table-borderless">
+        <tbody>
+          <thead>
+            <th></th>
+            <th>ITEM(S)</th>
+            <th>ORDER TIME</th>
+            <th>COMPLETED TIME</th>
+            <th>DELIVERED TO</th>
+            <th>ORDER ID</th>
+          </thead>
+          {% for i in compCount %}
+          {% set uuid = ordersComp[i].uuid %}
+          <tr>
+            <td><img src="/public/img/completed.jpg"  style="width:100%;"></td>
+            <td style="width:10%;">{{ quantityCompList[i] }} items</td>
+            <td style="width:15%;">{{ ordersComp[i].order_time }}</td> 
+            <td style="width:15%;">{{ ordersComp[i].completed_time }}</td> 
+            <td style="width:20%;">{{ ordersComp[i].address }}</td>
+            <td style="width:20%;">{{ uuid }}</td>
+            <td style="width:15%;">
+              <div>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal_{{ uuid }}">VIEW ORDER</button>
+                <div class="modal fade bd-example-modal-lg" id="myModal_{{ uuid }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">VIEW ORDER</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="table">
+                          <tbody>
+                              {% for x in range(finalProdCompList[i].length) %}
+                              {% if finalProdCompList[i][x].img_location == null %}            
+                              {% set photo_location = "dynamic/product_photos/photo404" %}
+                              {% else %}
+                                  {% set photo_location = finalProdCompList[i][x].img_location %}
+                              {% endif %}
+                              {% if finalProdCompList[i][x] == null %}
+                              <tr>
+                                <td style="width: 25%;"></td>
+                                <td style="width: 5%;"><img src="/public/img/itemNotFound.jpg" width="100"></td>
+                                <td style="padding-top:5%;"><h6 style="color:gray;">This item is not available anymore!</h6></td>
+                              </tr>
+                              {% else %}
+                              <tr>
+                                  <td style="width:15%;"><img src="/{{photo_location}}" alt="product image" width="100%"></td>
+                                  <td style="width:25%;padding-top: 5%;">{{ finalProdCompList[i][x].name }}</td>
+                                  <td style="width:15%;padding-top: 5%;">${{ finalProdCompList[i][x].price }}</td>
+                                  <td style="width:15%;padding-top: 5%;">{{ compOrderDetails[i][x].quantity }}</td>
+                                  <td style="width:15%;padding-top: 5%;">${{ finalProdCompList[i][x].price * compOrderDetails[i][x].quantity }}</td> 
+                              </tr>
+                              {% endif %}
+                              {% endfor %}  
+                          </tbody>
+                        </table>
+                        <h6 style="color: gray;">Order ID: {{ uuid }}</h6>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">CLOSE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
